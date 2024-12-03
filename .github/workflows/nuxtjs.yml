@@ -22,10 +22,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
       - name: Set up pnpm
         run: |
-          curl -fsSL https://get.pnpm.io/v6.16.js | node - add --global pnpm
-          pnpm env use --global 20 # Node.js sürümünü ayarla
+          corepack enable
+          corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
         run: pnpm install
