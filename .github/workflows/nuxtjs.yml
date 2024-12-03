@@ -22,6 +22,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+
+      - name: Add pnpm to PATH
+        run: echo "$HOME/.local/share/pnpm" >> $GITHUB_PATH
+  
+
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
