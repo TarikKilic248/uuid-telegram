@@ -1,99 +1,14 @@
 <!-- eslint-disable no-alert -->
 <script setup>
-import { onMounted, ref } from 'vue'
+import { useTelegramStore } from '~/stores/telegram'
+import { useUUIDStore } from '~/stores/uuid'
 
-// UUID ve bot konfigürasyonu
-const uuid = ref('')
-const botToken = useRuntimeConfig().public.botToken
-const chatId = ref('') // Dinamik chat ID'yi burada alıyoruz
-
-async function sendUuidToTelegram() {
-  if (!chatId.value) {
-    alert('Lütfen geçerli bir Chat ID girin.')
-    return
-  }
-
-  await sendToTelegram(uuid.value)
-}
-
-async function fetchUuid() {
-  try {
-    const response = await fetch('https://www.uuidgenerator.net/api/version1')
-    const data = await response.text()
-    uuid.value = data.trim()
-  }
-  catch (error) {
-    console.error('UUID alırken hata oluştu:', error)
-  }
-}
-
-async function sendToTelegram(uuid) {
-  if (!uuid) {
-    alert('Gönderilecek UUID bulunamadı!')
-    return
-  }
-
-  const message = `Yeni UUID oluşturuldu: ${uuid}`
-  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
-
-  try {
-    const response = await fetch(telegramUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: chatId.value,
-        text: message,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Telegram API hatası: ${response.statusText}`)
-    }
-
-    alert('UUID başarıyla Telegram\'a gönderildi!')
-  }
-  catch (error) {
-    console.error('Telegram\'a gönderim sırasında bir hata oluştu:', error)
-    alert('Telegram\'a gönderim başarısız oldu.')
-  }
-}
-
-async function copyToClipboard() {
-  if (!uuid.value) {
-    alert('Kopyalanacak UUID bulunamadı!')
-    return
-  }
-
-  try {
-    await navigator.clipboard.writeText(uuid.value)
-    alert('UUID başarıyla kopyalandı!')
-  }
-  catch (error) {
-    console.error('Kopyalama işlemi sırasında bir hata oluştu:', error)
-    alert('Kopyalama işlemi başarısız oldu. Lütfen tarayıcınızı kontrol edin.')
-  }
-}
-
-async function getChatIdFromBackend() {
-  const response = await fetch('/api/telegram')
-  const data = await response.json()
-  if (data.chatId) {
-    chatId.value = data.chatId
-  }
-  else {
-    alert('Chat ID alınamadı.')
-  }
-}
-
-function regenerateUuid() {
-  fetchUuid()
-}
+const telegramStore = useTelegramStore()
+const uuidStore = useUUIDStore()
 
 onMounted(() => {
-  getChatIdFromBackend()
-  fetchUuid()
+  uuidStore.generateUuid()
+  telegramStore.fetchTelegram()
 })
 </script>
 
@@ -106,11 +21,11 @@ onMounted(() => {
             UUID Maker
           </div>
           <div class="text-surface-700 dark:text-surface-100 text-2xl mb-8">
-            <span>{{ uuid }}</span>
+            <span>{{ uuidStore.uuid }}</span>
             <Button
               icon="i-heroicons-document-duplicate"
               label="Copy"
-              @click="copyToClipboard"
+              @click="uuidStore.copyUuid"
             />
           </div>
           <Button
@@ -118,7 +33,7 @@ onMounted(() => {
             raised
             rounded
             class="font-bold px-8 py-4 whitespace-nowrap"
-            @click="regenerateUuid"
+            @click="uuidStore.generateUuid"
           />
         </div>
       </div>
@@ -131,12 +46,12 @@ onMounted(() => {
         <p class="text-surface-700 dark:text-surface-200 leading-normal mb-8 text-center lg:text-left">
           Search UUID_Maker for Telegram.
         </p>
-        <p>Your Chat ID: {{ chatId }}</p>
+        <p>Your Chat ID: {{ telegramStore.chatId }}</p>
         <div class="font-bold px-8 py-4 whitespace-nowrap">
           <Button
             label="Send UUID"
             type="button"
-            @click="sendUuidToTelegram"
+            @click="telegramStore.sendUUIDToTelegram(uuidStore.uuid)"
           />
         </div>
       </div>
