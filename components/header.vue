@@ -5,60 +5,15 @@ import { onMounted, ref } from 'vue'
 // UUID ve bot konfigürasyonu
 const uuid = ref('')
 const botToken = useRuntimeConfig().public.botToken
-const chatId = useRuntimeConfig().public.chatId
-
-async function checkChatId(chatId) {
-  try {
-    const response = await fetch('/api/telegram/check-chat-id', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ chatId }),
-    })
-    return await response.json()
-  }
-  catch (error) {
-    console.error('Chat ID kontrol hatası:', error)
-    return { chatIdExists: false }
-  }
-}
-
-async function saveChatId(chatId) {
-  try {
-    const response = await fetch('/api/telegram/save-chat-id', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ chatId }),
-    })
-    return await response.json()
-  }
-  catch (error) {
-    console.error('Chat ID kaydetme hatası:', error)
-    return { success: false }
-  }
-}
+const chatId = ref('') // Dinamik chat ID'yi burada alıyoruz
 
 async function sendUuidToTelegram() {
-  const chatId = 'KULLANICI_CHAT_ID' // Kullanıcının chat_id'sini burada belirleyin
-
-  // Chat ID kontrol et
-  const checkResponse = await checkChatId(chatId)
-
-  if (checkResponse.chatIdExists) {
-    // Eğer kayıtlıysa, UUID'yi gönder
-    await sendToTelegram(uuid.value)
+  if (!chatId.value) {
+    alert('Lütfen geçerli bir Chat ID girin.')
+    return
   }
-  else {
-    // Eğer kayıtlı değilse, kaydetme akışı
-    const saveResponse = await saveChatId(chatId)
-    if (saveResponse.success) {
-      alert('Botu başlatmanız gerekiyor. Lütfen Telegram\'da botu başlatın.')
-      window.open(`https://t.me/UUID_maker_version1_bot`, '_blank')
-    }
-  }
+
+  await sendToTelegram(uuid.value)
 }
 
 async function fetchUuid() {
@@ -73,12 +28,12 @@ async function fetchUuid() {
 }
 
 async function sendToTelegram(uuid) {
-  if (!uuid.value) {
+  if (!uuid) {
     alert('Gönderilecek UUID bulunamadı!')
     return
   }
 
-  const message = `Yeni UUID oluşturuldu: ${uuid.value}`
+  const message = `Yeni UUID oluşturuldu: ${uuid}`
   const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
 
   try {
@@ -88,7 +43,7 @@ async function sendToTelegram(uuid) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: chatId.value,
         text: message,
       }),
     })
@@ -121,11 +76,23 @@ async function copyToClipboard() {
   }
 }
 
+async function getChatIdFromBackend() {
+  const response = await fetch('/api/telegram')
+  const data = await response.json()
+  if (data.chatId) {
+    chatId.value = data.chatId
+  }
+  else {
+    alert('Chat ID alınamadı.')
+  }
+}
+
 function regenerateUuid() {
   fetchUuid()
 }
 
 onMounted(() => {
+  getChatIdFromBackend()
   fetchUuid()
 })
 </script>
@@ -159,11 +126,12 @@ onMounted(() => {
         <h1 class="text-3xl lg:text-5xl font-bold text-surface-900 dark:text-surface-0 mb-4 lg:leading-normal text-center lg:text-left">
           Send message to Telegram
         </h1>
-        <a href="https://t.me/UUID_maker_version1_bot" target="_blank">Botu Başlat</a>
+        <a href="https://t.me/UUID_maker_version1_bot" class="font-bold px-8 py-4 whitespace-nowrap" target="_blank">Botu Başlat</a>
 
         <p class="text-surface-700 dark:text-surface-200 leading-normal mb-8 text-center lg:text-left">
           Search UUID_Maker for Telegram.
         </p>
+        <p>Your Chat ID: {{ chatId }}</p>
         <div class="font-bold px-8 py-4 whitespace-nowrap">
           <Button
             label="Send UUID"

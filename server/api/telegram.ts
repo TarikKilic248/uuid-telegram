@@ -1,30 +1,24 @@
-import { defineEventHandler, getQuery, readBody } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 
-// Chat ID'leri saklamak için bir set
-const chatIds = new Set<string>()
+// Botun aldığı son güncellemeleri kontrol et
+async function getChatIdFromBot() {
+  const botToken = process.env.BOT_TOKEN // Bot token'ınızı buraya alın
 
-// Check chat ID endpoint
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
+  
+  const response = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`)
+  const data = await response.json()
 
-  // Endpoint belirleme
-  if (event.req.url?.includes('check-chat-id')) {
-    const chatId = body.chatId
-
-    if (chatIds.has(chatId)) {
-      return { chatIdExists: true }
-    }
-    else {
-      return { chatIdExists: false }
-    }
+  if (data.ok && data.result.length > 0) {
+    const chatId = data.result[data.result.length - 1].message.chat.id
+    return chatId
   }
-
-  // Save chat ID endpoint
-  if (event.req.url?.includes('save-chat-id')) {
-    const chatId = body.chatId
-    chatIds.add(chatId)
-    return { success: true }
+  else {
+    throw new Error('Kullanıcı chat ID alınamadı')
   }
+}
 
-  return { error: 'Invalid API endpoint' }
+export default defineEventHandler(async () => {
+  // Botun chat ID'sini almak için getUpdates çağrısı yapabilirsiniz
+  const chatId = await getChatIdFromBot()
+  return { chatId }
 })
