@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  name: 'home',
+})
 const telegramStore = useTelegramStore()
 const uuidStore = useUUIDStore()
 
