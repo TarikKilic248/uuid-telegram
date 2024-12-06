@@ -6,7 +6,6 @@ const telegramStore = useTelegramStore()
 const uuidStore = useUUIDStore()
 
 onMounted(() => {
-  uuidStore.generateUuid()
 })
 </script>
 
