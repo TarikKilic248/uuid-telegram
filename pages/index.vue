@@ -7,7 +7,6 @@ const uuidStore = useUUIDStore()
 
 onMounted(() => {
   uuidStore.generateUuid()
-  telegramStore.fetchTelegram()
 })
 </script>
 
@@ -40,7 +39,7 @@ onMounted(() => {
         <h1 class="text-3xl lg:text-5xl font-bold text-surface-900 dark:text-surface-0 mb-4 lg:leading-normal text-center lg:text-left">
           Send message to Telegram
         </h1>
-        <a href="https://t.me/UUID_maker_version1_bot" class="font-bold px-8 py-4 whitespace-nowrap" target="_blank">Botu Başlat</a>
+        <a href="https://t.me/UUID_maker_version1_bot" class="font-bold px-8 py-4 whitespace-nowrap" target="_blank" @click="telegramStore.fetchTelegram">Botu Başlat</a>
 
         <p class="text-surface-700 dark:text-surface-200 leading-normal mb-8 text-center lg:text-left">
           Search UUID_Maker for Telegram.
