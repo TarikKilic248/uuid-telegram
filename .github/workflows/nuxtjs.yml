@@ -28,6 +28,13 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
+
+      - name: Install pnpm if missing
+        run: npm install -g pnpm || echo "pnpm already installed"
+      
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Install pnpm
         run: |
           npm install -g pnpm
