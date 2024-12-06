@@ -29,9 +29,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install pnpm
-        run: |
-            export SHELL=/bin/bash
-            curl -fsSL https://get.pnpm.io/install.sh | sh -
+        run: npm install -g pnpm
 
       - name: Verify pnpm installation
         run: pnpm --version
