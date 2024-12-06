@@ -14,7 +14,4 @@ export default defineNuxtConfig({
       chatId: process.env.CHAT_ID,
     },
   },
-  router: {
-    // base: '/uuid-telegram/',
-  },
 })
