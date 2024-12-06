@@ -22,24 +22,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
-
-      - name: Add pnpm to PATH
-        run: echo "$HOME/.local/share/pnpm" >> $GITHUB_PATH
-  
-
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
 
-      - name: Set up pnpm
+      - name: Install pnpm
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
+
+      - name: Verify pnpm installation
+        run: pnpm --version
+
 
       - name: Install dependencies
         run: pnpm install
