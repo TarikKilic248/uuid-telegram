@@ -1,75 +1,34 @@
-# Nuxt Minimal Starter
+# Send uuid message telegram bot
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Bu proje, [Telegram BotFather] için geliştirilmiş bir Nuxt.js uygulamasıdır.
 
-## Setup
+![Ana Ekran](public/ana_ekran.png)
 
-Make sure to install dependencies:
+## Başlarken
+
+Bu talimatlar, projenin yerel makinenizde nasıl çalıştırılacağını açıklamaktadır.
+
+- Bilgisayara Node.js kurulumu yapın.
+- Projeyi klonlayın. Ve npm kurulumu yapın.
 
 ```bash
-# npm
+# npm setup
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+- Telegram uygulamasından BotFather kullanarak bir tane bot oluşturun.
+- Oluşturduğunuz botun TOKEN için .env dosyasına yazın. Örneğin
 
 ```bash
-# npm
+BOT_TOKEN = "7733******:AAHRc6*********************"
+```
+- Sonra projeyi çalıştırın.
+
+```bash
+# npm development server
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+#Start the development server on `http://localhost:3000`
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
