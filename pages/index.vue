@@ -4,10 +4,16 @@ definePageMeta({
 })
 const telegramStore = useTelegramStore()
 const uuidStore = useUUIDStore()
+const botInitialized = ref(false)
 
 onMounted(() => {
   uuidStore.generateUuid()
 })
+
+async function initializeBot() {
+  botInitialized.value = true
+  await telegramStore.fetchTelegram()
+}
 </script>
 
 <template>
@@ -39,16 +45,43 @@ onMounted(() => {
         <h1 class="text-3xl lg:text-5xl font-bold text-surface-900 dark:text-surface-0 mb-4 lg:leading-normal text-center lg:text-left">
           Send message to Telegram
         </h1>
-        <a href="https://t.me/UUID_maker_version1_bot" class="font-bold px-8 py-4 whitespace-nowrap" target="_blank" @click="telegramStore.fetchTelegram">Botu Başlat</a>
 
-        <p class="text-surface-700 dark:text-surface-200 leading-normal mb-8 text-center lg:text-left">
-          Search UUID_Maker for Telegram.
-        </p>
-        <p>Your Chat ID: {{ telegramStore.chatId }}</p>
-        <div class="font-bold px-8 py-4 whitespace-nowrap">
+        <div class="flex flex-col items-center mb-6">
+          <p class="mb-4 text-surface-700 dark:text-surface-200">
+            1. Adım: Telegram botunu başlatın
+          </p>
+          <a
+            href="https://t.me/UUID_maker_version1_bot"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-4 rounded-lg mb-4"
+            target="_blank"
+            @click="initializeBot"
+          >
+            Botu Başlat
+          </a>
+
+          <p class="mb-4 text-surface-700 dark:text-surface-200">
+            2. Adım: Bota bir mesaj gönderin ve "Yükle" butonuna tıklayın
+          </p>
           <Button
-            label="Send UUID"
-            type="button"
+            label="Yükle"
+            class="bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-lg mb-4"
+            @click="telegramStore.fetchTelegram"
+          />
+
+          <p class="text-surface-700 dark:text-surface-200 mb-2">
+            Chat ID Durumu:
+          </p>
+          <p :class="{ 'text-red-500': !telegramStore.chatId, 'text-green-500': telegramStore.chatId }" class="mb-6">
+            {{ telegramStore.chatId ? 'Başarılı ✓' : 'Bağlantı Kurulmadı ✗' }}
+          </p>
+
+          <p class="mb-4 text-surface-700 dark:text-surface-200">
+            3. Adım: UUID'yi Telegram'a gönderin
+          </p>
+          <Button
+            label="UUID'yi Telegram'a Gönder"
+            class="bg-purple-500 hover:bg-purple-600 text-white font-bold px-8 py-4 rounded-lg"
+            :disabled="!telegramStore.chatId"
             @click="telegramStore.sendUUIDToTelegram(uuidStore.uuid)"
           />
         </div>

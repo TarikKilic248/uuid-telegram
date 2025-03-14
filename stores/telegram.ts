@@ -3,12 +3,33 @@ export const useTelegramStore = defineStore('telegram', () => {
   const chatId = ref()
 
   const fetchTelegram = async () => {
-    const response = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`)
-    const data = await response.json()
-    chatId.value = data.result[data.result.length - 1]?.message.chat.id
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`)
+      const data = await response.json()
+
+      if (data.ok && data.result.length > 0) {
+        // API'den gelen son mesajın chat_id'sini al
+        chatId.value = data.result[data.result.length - 1]?.message?.chat?.id
+
+        if (!chatId.value) {
+          console.error('Chat ID bulunamadı, API yanıtı:', data)
+        }
+      }
+      else {
+        console.error('Telegram API yanıtı başarısız veya sonuç boş:', data)
+      }
+    }
+    catch (error) {
+      console.error('Telegram API hatası:', error)
+    }
   }
 
   const sendUUIDToTelegram = async (uuid: any) => {
+    if (!chatId.value) {
+      alert('Chat ID bulunamadı. Lütfen önce "Botu Başlat" butonuna tıklayın ve sonra "Yükle" butonuna basın.')
+      return
+    }
+
     const message = `Yeni UUID oluşturuldu: ${uuid}`
     const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
 
@@ -27,9 +48,12 @@ export const useTelegramStore = defineStore('telegram', () => {
       if (!response.ok) {
         throw new Error(`Telegram API hatası: ${response.statusText}`)
       }
+
+      alert('UUID başarıyla Telegram\'a gönderildi!')
     }
     catch (error) {
       console.error('Telegram\'a gönderim sırasında bir hata oluştu:', error)
+      alert('Telegram\'a gönderim sırasında bir hata oluştu. Lütfen konsolu kontrol edin.')
     }
   }
 
