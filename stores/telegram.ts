@@ -48,8 +48,6 @@ export const useTelegramStore = defineStore('telegram', () => {
       if (!response.ok) {
         throw new Error(`Telegram API hatası: ${response.statusText}`)
       }
-
-      alert('UUID başarıyla Telegram\'a gönderildi!')
     }
     catch (error) {
       console.error('Telegram\'a gönderim sırasında bir hata oluştu:', error)

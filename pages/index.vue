@@ -51,22 +51,13 @@ async function initializeBot() {
             1. Adım: Telegram botunu başlatın
           </p>
           <a
-            href="https://t.me/UUID_maker_version1_bot"
+            href="https://web.telegram.org/k/"
             class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-4 rounded-lg mb-4"
             target="_blank"
             @click="initializeBot"
           >
             Botu Başlat
           </a>
-
-          <p class="mb-4 text-surface-700 dark:text-surface-200">
-            2. Adım: Bota bir mesaj gönderin ve "Yükle" butonuna tıklayın
-          </p>
-          <Button
-            label="Yükle"
-            class="bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-lg mb-4"
-            @click="telegramStore.fetchTelegram"
-          />
 
           <p class="text-surface-700 dark:text-surface-200 mb-2">
             Chat ID Durumu:
